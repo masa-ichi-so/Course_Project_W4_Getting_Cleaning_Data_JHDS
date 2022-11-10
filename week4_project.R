@@ -8,7 +8,7 @@ download.file(fileUrl,destfile="./data/dataproject.zip", method="libcurl")
 unzip(zipfile = "./data/dataproject.zip", exdir = "./data")
 
 # Unzip files folder UCI HAR Dataset
-pathUCI <-  file.path("./data", "UCI HAR Dataset")
+pathUCI <-  file.path("./UCI HAR Dataset")
 files <- list.files(pathUCI, recursive = TRUE)
 files
 
@@ -59,15 +59,19 @@ data_mean_std$Activity <- factor(data_mean_std$Activity, labels = activity_label
 
 
 # 4. Appropriately labels the data set with descriptive variable names. ----
-# These variables are labeled in step 1.
-
+names(data_mean_std)<-gsub("^t", "time", names(data_mean_std))
+names(data_mean_std)<-gsub("^f", "frequency", names(data_mean_std))
+names(data_mean_std)<-gsub("Acc", "Accelerometer", names(data_mean_std))
+names(data_mean_std)<-gsub("Gyro", "Gyroscope", names(data_mean_std))
+names(data_mean_std)<-gsub("Mag", "Magnitude", names(data_mean_std))
+names(data_mean_std)<-gsub("BodyBody", "Body", names(data_mean_std))
 
 # 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.----
 library(tidyverse)
 tidy_data <- data_mean_std %>% 
   group_by(Subject, Activity) %>% 
-  summarise(across(`tBodyAcc-mean()-X`:`fBodyBodyGyroJerkMag-std()`, mean)) %>%
+  summarise(across(`frequencyBodyGyroscopeJerkMagnitude-std()`:`timeBodyAccelerometer-mean()-X`, mean)) %>%
   ungroup()
 
-write.table(tidy_data, file = "./data/tidy_data.txt", row.names = FALSE)
+write.table(tidy_data, file = "./tidy_data.txt", row.names = FALSE)
                         
